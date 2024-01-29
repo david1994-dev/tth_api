@@ -160,6 +160,24 @@ class BaseRepository implements BaseRepositoryInterface
             unset($filter['whereNotIn']);
         }
 
+        if(array_key_exists('greaterThan', $filter)) {
+            $params = Arr::get($filter, 'greaterThan');
+            foreach ($params as $column => $values) {
+                $query = $query->where($tableName.'.'.$column, '>',$values);
+            }
+
+            unset($filter['greaterThan']);
+        }
+
+        if(array_key_exists('lessThan', $filter)) {
+            $params = Arr::get($filter, 'lessThan');
+            foreach ($params as $column => $values) {
+                $query = $query->where($tableName.'.'.$column, '<',$values);
+            }
+
+            unset($filter['lessThan']);
+        }
+
         foreach ($filter as $column => $value) {
             if (is_array($value)) {
                 $query = $query->whereIn($tableName.'.'.$column, $value);

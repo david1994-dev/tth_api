@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\AuthenticateController;
+use App\Http\Controllers\Api\V1\ThongBaoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,8 +22,8 @@ Route::group(['namespace' => 'API'], function () {
             Route::post('signin', [AuthenticateController::class, 'singIn']);
         });
 
-        Route::middleware('auth:api')->get('/demo', function (Request $request) {
-            dd('da login');
+        Route::group(['middleware' => ['auth:api']], function () {
+            Route::get('thong-bao', [ThongBaoController::class, 'index']);
         });
     });
 });
