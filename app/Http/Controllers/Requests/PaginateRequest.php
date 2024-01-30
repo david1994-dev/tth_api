@@ -9,6 +9,7 @@ class PaginateRequest extends FormRequest
     public int $offset = 0;
 
     public int $limit = 20;
+    public int $lastID = 0;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -46,13 +47,22 @@ class PaginateRequest extends FormRequest
     }
 
     /**
-     * @param int $default
-     *
      * @return int
      */
-    public function limit(int $default = 20): int
+    public function lastID(): int
     {
-        $this->limit = $default;
+        $lastID = $this->get('last_id', 0);
+        $this->lastID = $lastID;
+
+        return $this->lastID;
+    }
+
+    /**
+     * @return int
+     */
+    public function limit(): int
+    {
+        $this->limit = $this->get('limit', 20);
 
         return $this->limit;
     }

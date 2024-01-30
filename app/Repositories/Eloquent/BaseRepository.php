@@ -248,6 +248,36 @@ class BaseRepository implements BaseRepositoryInterface
         return $model;
     }
 
+    public function updateOrCreate($input, $update)
+    {
+        DB::connection()->enableQueryLog();
+
+        $model = $this->getBlankModel()->updateOrCreate($input, $update);
+
+        $queries = DB::getQueryLog();
+        $query = $queries[count($queries) - 1];
+        foreach( $query['bindings'] as $key => $value ) {
+            $query['query'] = preg_replace("/\?/", "`$value`", $query['query'], 1);
+        }
+
+        if( App::environment() != 'testing' ) {
+            $user = auth()->user();
+            if( !empty($user) ) {
+//                Log::create(
+//                    [
+//                        'user_id' => $user->id,
+//                        'table'     => $this->getBlankModel()->getTable(),
+//                        'action'    => Log::TYPE_ACTION_INSERT,
+//                        'record_id' => $model->id,
+//                        'query'     => $query['query'],
+//                    ]
+//                );
+            }
+        }
+
+        return $model;
+    }
+
     public function update($model, $input)
     {
         foreach ($model->getEditableColumns() as $column) {

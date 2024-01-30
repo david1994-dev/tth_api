@@ -26,6 +26,7 @@ class ThongBao extends Base
     public function toAPIArray()
     {
         return [
+            'id' => $this->id,
             'title' => $this->title,
             'content' => $this->content,
             'images' => $this->images ?? [],

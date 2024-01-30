@@ -24,6 +24,8 @@ Route::group(['namespace' => 'API'], function () {
 
         Route::group(['middleware' => ['auth:api']], function () {
             Route::get('thong-bao', [ThongBaoController::class, 'index']);
+            Route::get('thong-bao/them', [ThongBaoController::class, 'getMore']);
+            Route::post('thong-bao/doc', [ThongBaoController::class, 'read']);
         });
     });
 });
