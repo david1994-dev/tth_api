@@ -25,12 +25,23 @@ class ThongBao extends Base
 
     public function toAPIArray()
     {
+        $user = auth()->user();
+        if (!$user) {
+            $isRead = false;
+        } else {
+            $userId = $user->id;
+            $status = ThongBaoUser::STATUS_DA_DOC;
+            $isRead = $this->userRead->contains(function ($val, $key) use ($userId, $status) {
+                return $val->user_id == $userId && $val->status == $status;
+            });
+        }
+
         return [
             'id' => $this->id,
             'title' => $this->title,
             'content' => $this->content,
             'images' => $this->images ?? [],
-            'is_read' => $this->userRead()->where('user_id', $this->id)->exists()
+            'is_read' => $isRead
         ];
     }
 }
