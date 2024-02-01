@@ -2,25 +2,55 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Arr;
+
 class ThongBao extends Base
 {
-    const RECEIVE_ALL = 0;
+    const MUC_DO_BINH_THUONG = 1;
+    const MUC_DO_KHAN = 2;
+    const MUC_DO_MAT = 3;
+
+    const MUC_DO = [
+        self::MUC_DO_BINH_THUONG => 'Bình Thường',
+        self::MUC_DO_KHAN => 'Khẩn',
+        self::MUC_DO_MAT => 'Mật'
+    ];
 
     protected $table = 'thong_bao';
     protected $fillable = [
-        'receive_id',
-        'title',
-        'content',
-        'images'
+        'slug',
+        'tieu_de',
+        'chi_nhanh_ids',
+        'phong_ban_ids',
+        'nhom_nguoi_nhan_ids',
+        'nguoi_nhan_ids',
+        'loai_thong_bao',
+        'muc_do',
+        'noi_dung',
+        'dinh_kem',
+        'xuat_ban',
+        'nguoi_gui_id'
     ];
 
     protected $casts = [
-        'images' => 'array'
+        'chi_nhanh_ids' => 'array',
+        'phong_ban_ids' => 'array',
+        'nhom_nguoi_nhan_ids' => 'array',
+        'nguoi_nhan_ids' => 'array',
+        'dinh_kem' => 'array',
+        'gui_tat_ca' => 'boolean',
+        'xuat_ban' => 'boolean',
+        'deleted_at' => 'datetime:Y-m-d H:i:s'
     ];
 
     public function userRead()
     {
         return $this->hasMany(ThongBaoUser::class, 'thong_bao_id', 'id');
+    }
+
+    public function loaiThongBao()
+    {
+        return $this->hasOne(LoaiThongBao::class, 'id', 'loai_thong_bao');
     }
 
     public function toAPIArray()
@@ -38,9 +68,11 @@ class ThongBao extends Base
 
         return [
             'id' => $this->id,
-            'title' => $this->title,
-            'content' => $this->content,
-            'images' => $this->images ?? [],
+            'tieu_de' => $this->tieu_de,
+            'muc_do' => Arr::get(self::MUC_DO, $this->muc_do, ''),
+            'noi_dung' => $this->noi_dung,
+            'loai_thong_bao' => $this->loaiThongBao->ten,
+            'dinh_kem' => $this->dinh_kem ?? [],
             'is_read' => $isRead
         ];
     }

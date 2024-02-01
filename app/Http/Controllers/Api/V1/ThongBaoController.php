@@ -32,7 +32,6 @@ class ThongBaoController extends Controller
         $paginate['offset']     = $request->offset();
         $paginate['order']      = $request->order();
         $paginate['direction']  = $request->direction();
-        $paginate['last_id']  = $request->lastID();
 
         $keyword = $request->get('keyword');
 
@@ -41,14 +40,9 @@ class ThongBaoController extends Controller
             $filter['query'] = $keyword;
         }
 
-        $filter['greaterThan'] = [
-            'id' => max($user->last_notification_id, $paginate['last_id']),
-        ];
-
-        $filter['receive_id'] = [ThongBao::RECEIVE_ALL, $user->id];
-
-        $models = $this->thongBaoRepository->getByFilter($filter, $paginate['order'], $paginate['direction'], $paginate['offset'], $paginate['limit']);
-        $models = $this->thongBaoRepository->load($models, 'userRead');
+        $filter['last_id'] = $request->lastID();
+        $models = $this->thongBaoRepository->getNotifications($user, $filter, $paginate['order'], $paginate['direction'], $paginate['offset'], $paginate['limit']);
+        $models = $this->thongBaoRepository->load($models, ['userRead', 'loaiThongBao']);
         foreach( $models as $key => $model ) {
             $models[$key] = $model->toAPIArray();
         }
@@ -59,7 +53,6 @@ class ThongBaoController extends Controller
     public function getMore(PaginateRequest $request)
     {
         $user = auth()->user();
-        $paginate['last_id']  = $request->lastID();
         $paginate['order']      = $request->order();
         $paginate['direction']  = $request->direction();
 
@@ -70,14 +63,11 @@ class ThongBaoController extends Controller
             $filter['query'] = $keyword;
         }
 
-        $filter['greaterThan'] = [
-            'id' => max($user->last_notification_id, $paginate['last_id']),
-        ];
+        $filter['last_id'] = $request->lastID();
 
-        $filter['receive_id'] = [ThongBao::RECEIVE_ALL, $user->id];
+        $models = $this->thongBaoRepository->getMore($user, $filter, $paginate['order'], $paginate['direction']);
+        $models = $this->thongBaoRepository->load($models, ['userRead', 'loaiThongBao']);
 
-        $models = $this->thongBaoRepository->allByFilter($filter, $paginate['order'], $paginate['direction']);
-        $models = $this->thongBaoRepository->load($models, 'userRead');
         foreach( $models as $key => $model ) {
             $models[$key] = $model->toAPIArray();
         }
