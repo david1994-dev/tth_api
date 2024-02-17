@@ -41,6 +41,9 @@ class ThongBaoController extends Controller
         }
 
         $filter['last_id'] = $request->lastID();
+        $filter['category'] = $request->get('category', '');
+        $filter['created_at_from'] = $request->get('created_at_from');
+        $filter['created_at_to'] = $request->get('created_at_to');
         $models = $this->thongBaoRepository->getNotifications($user, $filter, $paginate['order'], $paginate['direction'], $paginate['offset'], $paginate['limit']);
         $models = $this->thongBaoRepository->load($models, ['userRead', 'loaiThongBao']);
         foreach( $models as $key => $model ) {
@@ -64,6 +67,9 @@ class ThongBaoController extends Controller
         }
 
         $filter['last_id'] = $request->lastID();
+        $filter['category'] = $request->get('category', '');
+        $filter['created_at_from'] = $request->get('created_at_from');
+        $filter['created_at_to'] = $request->get('created_at_to');
 
         $models = $this->thongBaoRepository->getMore($user, $filter, $paginate['order'], $paginate['direction']);
         $models = $this->thongBaoRepository->load($models, ['userRead', 'loaiThongBao']);

@@ -71,9 +71,10 @@ class ThongBao extends Base
             'tieu_de' => $this->tieu_de,
             'muc_do' => Arr::get(self::MUC_DO, $this->muc_do, ''),
             'noi_dung' => $this->noi_dung,
-            'loai_thong_bao' => $this->loaiThongBao->ten,
+            'loai_thong_bao' => $this->loaiThongBao ? $this->loaiThongBao->ten : 'deleted',
             'dinh_kem' => $this->dinh_kem ?? [],
-            'is_read' => $isRead
+            'is_read' => $isRead,
+            'created_at' => $this->created_at->format('Y-m-d h:i:s')
         ];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\ThongBao;
 use App\Repositories\Interface\ThongBaoRepositoryInterface;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class ThongBaoRepository extends BaseRepository implements ThongBaoRepositoryInterface
@@ -25,27 +26,46 @@ class ThongBaoRepository extends BaseRepository implements ThongBaoRepositoryInt
 
     private function buildQuery($user, $filter, $order=null, $direction=null, $offset=null, $limit=null)
     {
-        //todo filter
         $nhanVien = $user->nhanVien;
         $query = $this->getBlankModel()
-            ->where('id', '>', max($user->last_notification_id, $filter['last_id']))
+            ->where('id', '>', $user->last_notification_id)
             ->where('xuat_ban', true)
             ->where(function ($qr) use ($nhanVien) {
                 $qr->where('gui_tat_ca', true)
                     ->orWhere(function ($q) use ($nhanVien) {
                         $q->whereJsonContains('chi_nhanh_ids', $nhanVien->chi_nhanh_id)
                             ->orWhereJsonContains('phong_ban_ids', $nhanVien->phong_ban_id)
-                            ->orWhereJsonContains('phong_ban_ids', $nhanVien->phong_ban_id)
+//                            ->orWhereJsonContains('phong_ban_ids', $nhanVien->phong_ban_id)
                             ->orWhereJsonContains('nguoi_nhan_ids', $nhanVien->user_id);
                     });
             });
+
+        if (!empty($filter['last_id'])) {
+            $query = $query->where('id', '<', $filter['last_id']);
+        }
+
+        if (!empty($filter['category'])) {
+            $query = $query->where('loai_thong_bao', $filter['category']);
+        }
+
+        if (!empty($filter['created_at_from'])) {
+            $query = $query->where('created_at', '>=', Carbon::parse($filter['created_at_from']));
+        }
+
+        if (!empty($filter['created_at_to'])) {
+            $query = $query->where('created_at', '<=', Carbon::parse($filter['created_at_to']));
+        }
 
         if ($order && $direction) {
             $query = $query->orderBy($order, $direction);
         }
 
-        if ($offset && $limit) {
-            $query = $query->skip($offset)->take($limit);
+        if ($offset) {
+            $query = $query->skip($offset);
+        }
+
+        if ($limit) {
+            $query = $query->take($limit);
         }
 
         return $query;
