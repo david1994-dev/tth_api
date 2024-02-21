@@ -52,4 +52,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(NhanVien::class, 'user_id', 'id');
     }
+
+    public function getNhomNhanSuAttribute()
+    {
+        return NhomNhanSu::query()->whereJsonContains('user_ids', $this->id)->pluck('id')->toArray();
+    }
 }

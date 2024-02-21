@@ -44,8 +44,10 @@ class ThongBaoController extends Controller
         $filter['category'] = $request->get('category', '');
         $filter['created_at_from'] = $request->get('created_at_from');
         $filter['created_at_to'] = $request->get('created_at_to');
+        $filter['is_new'] = $request->get('is_new', false);
+
         $models = $this->thongBaoRepository->getNotifications($user, $filter, $paginate['order'], $paginate['direction'], $paginate['offset'], $paginate['limit']);
-        $models = $this->thongBaoRepository->load($models, ['userRead', 'loaiThongBao']);
+        $models = $this->thongBaoRepository->load($models, ['userRead', 'loaiThongBao', 'nguoiGui.nhanVien.phongBan']);
         foreach( $models as $key => $model ) {
             $models[$key] = $model->toAPIArray();
         }
@@ -72,7 +74,7 @@ class ThongBaoController extends Controller
         $filter['created_at_to'] = $request->get('created_at_to');
 
         $models = $this->thongBaoRepository->getMore($user, $filter, $paginate['order'], $paginate['direction']);
-        $models = $this->thongBaoRepository->load($models, ['userRead', 'loaiThongBao']);
+        $models = $this->thongBaoRepository->load($models, ['userRead', 'loaiThongBao', 'nguoiGui.nhanVien']);
 
         foreach( $models as $key => $model ) {
             $models[$key] = $model->toAPIArray();
@@ -114,5 +116,15 @@ class ThongBaoController extends Controller
         }
 
         return Response::response(200);
+    }
+
+    public function details($id)
+    {
+        $model = $this->thongBaoRepository->findById($id);
+        if(!$model) {
+            return Response::response(20004);
+        }
+
+        return Response::response(200, $model->toDetailArray());
     }
 }

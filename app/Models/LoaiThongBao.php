@@ -17,4 +17,12 @@ class LoaiThongBao extends Base
     protected $casts = [
         'deleted_at' => 'datetime:Y-m-d H:i:s'
     ];
+
+    public function toAPIArray()
+    {
+        return [
+            'name' => $this->ten,
+            'id' => $this->id
+        ];
+    }
 }

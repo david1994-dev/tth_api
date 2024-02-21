@@ -11,9 +11,21 @@ class ThongBao extends Base
     const MUC_DO_MAT = 3;
 
     const MUC_DO = [
-        self::MUC_DO_BINH_THUONG => 'Bình Thường',
-        self::MUC_DO_KHAN => 'Khẩn',
-        self::MUC_DO_MAT => 'Mật'
+        self::MUC_DO_BINH_THUONG => [
+            'id' => self::MUC_DO_BINH_THUONG,
+            'name' => 'Bình Thường',
+            'color' => '0xff8f8f8f'
+        ],
+        self::MUC_DO_KHAN => [
+            'id' => self::MUC_DO_KHAN,
+            'name' => 'Khẩn',
+            'color' => '0xFFC2002F'
+        ],
+        self::MUC_DO_MAT => [
+            'id' => self::MUC_DO_MAT,
+            'name' => 'Mật',
+            'color' => '0xFF9575CD'
+        ],
     ];
 
     protected $table = 'thong_bao';
@@ -53,6 +65,11 @@ class ThongBao extends Base
         return $this->hasOne(LoaiThongBao::class, 'id', 'loai_thong_bao');
     }
 
+    public function nguoiGui()
+    {
+        return $this->hasOne(User::class, 'id', 'nguoi_gui_id');
+    }
+
     public function toAPIArray()
     {
         $user = auth()->user();
@@ -69,12 +86,23 @@ class ThongBao extends Base
         return [
             'id' => $this->id,
             'tieu_de' => $this->tieu_de,
-            'muc_do' => Arr::get(self::MUC_DO, $this->muc_do, ''),
+            'muc_do' => Arr::get(self::MUC_DO, $this->muc_do, []),
             'noi_dung' => $this->noi_dung,
             'loai_thong_bao' => $this->loaiThongBao ? $this->loaiThongBao->ten : 'deleted',
-            'dinh_kem' => $this->dinh_kem ?? [],
+            'loai_thong_bao_int' => $this->loai_thong_bao,
             'is_read' => $isRead,
-            'created_at' => $this->created_at->format('Y-m-d h:i:s')
+            'created_at' => $this->created_at->format('Y-m-d h:i:s'),
+            'details' => 'https://dieuhanh1.tthgroup.vn:81/thongbaonoidung/so-46qd-tth-ve-viec-tham-gia-doi-van-nghe-khoi-vp-tct20240220101007',
+            'nguoi_gui' => $this->nguoiGui->nhanVien->ho_ten .' - '.$this->nguoiGui->nhanVien->phongBan->ten
+        ];
+    }
+
+    public function toDetailArray()
+    {
+        $nguoiGui = $this->nguoiGui;
+        $nhaVienGui = $nguoiGui->nhanVien;
+        return [
+
         ];
     }
 }

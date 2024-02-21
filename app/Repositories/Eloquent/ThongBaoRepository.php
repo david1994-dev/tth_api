@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class ThongBaoRepository extends BaseRepository implements ThongBaoRepositoryInterface
 {
-    protected array $querySearchTargets = ['title'];
+    protected array $querySearchTargets = ['tieu_de'];
     public function getBlankModel()
     {
         return new ThongBao();
@@ -27,21 +27,26 @@ class ThongBaoRepository extends BaseRepository implements ThongBaoRepositoryInt
     private function buildQuery($user, $filter, $order=null, $direction=null, $offset=null, $limit=null)
     {
         $nhanVien = $user->nhanVien;
+        $nhomNhanSu = $user->nhomNhanSu;
         $query = $this->getBlankModel()
             ->where('id', '>', $user->last_notification_id)
             ->where('xuat_ban', true)
-            ->where(function ($qr) use ($nhanVien) {
+            ->where(function ($qr) use ($nhanVien, $nhomNhanSu) {
                 $qr->where('gui_tat_ca', true)
-                    ->orWhere(function ($q) use ($nhanVien) {
+                    ->orWhere(function ($q) use ($nhanVien, $nhomNhanSu) {
                         $q->whereJsonContains('chi_nhanh_ids', $nhanVien->chi_nhanh_id)
                             ->orWhereJsonContains('phong_ban_ids', $nhanVien->phong_ban_id)
-//                            ->orWhereJsonContains('phong_ban_ids', $nhanVien->phong_ban_id)
+                            ->orWhereJsonContains('nhom_nguoi_nhan_ids', $nhomNhanSu)
                             ->orWhereJsonContains('nguoi_nhan_ids', $nhanVien->user_id);
                     });
             });
 
         if (!empty($filter['last_id'])) {
-            $query = $query->where('id', '<', $filter['last_id']);
+            if ($filter['is_new']) {
+                $query = $query->where('id', '>', $filter['last_id']);
+            } else {
+                $query = $query->where('id', '<', $filter['last_id']);
+            }
         }
 
         if (!empty($filter['category'])) {
@@ -54,6 +59,10 @@ class ThongBaoRepository extends BaseRepository implements ThongBaoRepositoryInt
 
         if (!empty($filter['created_at_to'])) {
             $query = $query->where('created_at', '<=', Carbon::parse($filter['created_at_to']));
+        }
+
+        if (!empty($filter['query'])) {
+            $query = $query->where('tieu_de', 'LIKE', '%'.$filter['query'].'%');
         }
 
         if ($order && $direction) {

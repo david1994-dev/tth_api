@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\AuthenticateController;
 use App\Http\Controllers\Api\V1\ThongBaoController;
+use App\Http\Controllers\Api\V1\LoaiThongBaoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,8 @@ Route::group(['namespace' => 'API'], function () {
             Route::get('thong-bao', [ThongBaoController::class, 'index']);
             Route::get('thong-bao/them', [ThongBaoController::class, 'getMore']);
             Route::post('thong-bao/doc', [ThongBaoController::class, 'read']);
+            Route::get('thong-bao/{id}', [ThongBaoController::class, 'details']);
+            Route::get('loai-thong-bao', [LoaiThongBaoController::class, 'index']);
         });
     });
 });

@@ -18,6 +18,11 @@ class NhanVien extends Base
         self::GIOI_TINH_LGBT => 'LGBT',
     ];
 
+    public function phongBan()
+    {
+        return $this->hasOne(PhongBan::class, 'id', 'phong_ban_id');
+    }
+
     protected $fillable = [
         'ma',
         'user_id',
