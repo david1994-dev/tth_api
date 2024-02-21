@@ -76,11 +76,11 @@ class ThongBao extends Base
         if (!$user) {
             $isRead = false;
         } else {
-            $userId = $user->id;
-            $status = ThongBaoUser::STATUS_DA_DOC;
-            $isRead = $this->userRead->contains(function ($val, $key) use ($userId, $status) {
-                return $val->user_id == $userId && $val->status == $status;
-            });
+            $isRead = ThongBaoUser::query()
+                ->where('user_id', $user->id)
+                ->where('thong_bao_id', $this->id)
+                ->where('status', ThongBaoUser::STATUS_DA_DOC)
+                ->exists();
         }
 
         return [
@@ -93,7 +93,7 @@ class ThongBao extends Base
             'is_read' => $isRead,
             'created_at' => $this->created_at->format('Y-m-d h:i:s'),
             'details' => 'https://dieuhanh1.tthgroup.vn:81/thongbaonoidung/so-46qd-tth-ve-viec-tham-gia-doi-van-nghe-khoi-vp-tct20240220101007',
-            'nguoi_gui' => $this->nguoiGui->nhanVien->ho_ten .' - '.$this->nguoiGui->nhanVien->phongBan->ten
+            'nguoi_gui' => $this->nguoiGui->nhanVien->ho_ten . ' - ' . $this->nguoiGui->nhanVien->phongBan->ten
         ];
     }
 
@@ -102,7 +102,6 @@ class ThongBao extends Base
         $nguoiGui = $this->nguoiGui;
         $nhaVienGui = $nguoiGui->nhanVien;
         return [
-
         ];
     }
 }
