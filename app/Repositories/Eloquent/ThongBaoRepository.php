@@ -81,7 +81,7 @@ class ThongBaoRepository extends BaseRepository implements ThongBaoRepositoryInt
         $query = $this->buildQuery($user, $filter);
         $query->select([
             'thong_bao.*',
-            DB::raw("EXISTS (SELECT 1 FROM thong_bao_users WHERE thong_bao.id = thong_bao_users.thong_bao_id AND thong_bao_users.user_id = $userId AND thong_bao_users.status = $stRead) AS isRead")
+            DB::raw("EXISTS (SELECT 1 FROM thong_bao_users WHERE thong_bao.id = thong_bao_users.thong_bao_id AND thong_bao_users.user_id = $userId AND thong_bao_users.status = $stRead) AS is_read")
         ]);
 
         if ($order && $direction) {

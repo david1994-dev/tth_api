@@ -86,7 +86,7 @@ class ThongBao extends Base
             'noi_dung' => $this->noi_dung,
             'loai_thong_bao' => $this->loaiThongBao ? $this->loaiThongBao->ten : 'deleted',
             'loai_thong_bao_int' => $this->loai_thong_bao,
-            'is_read' => $this->isread,
+            'is_read' => $this->is_read,
             'created_at' => $this->created_at->format('Y-m-d h:i:s'),
             'nguoi_gui' => $this->sendFrom,
             'dinh_kem' => $this->dinh_kem ? URLHelper::getFullPathURL($this->dinh_kem) : []
