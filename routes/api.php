@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\AuthenticateController;
 use App\Http\Controllers\Api\V1\ThongBaoController;
 use App\Http\Controllers\Api\V1\LoaiThongBaoController;
+use App\Http\Controllers\Api\V1\NhanVienController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +30,10 @@ Route::group(['namespace' => 'API'], function () {
             Route::post('thong-bao/doc', [ThongBaoController::class, 'read']);
             Route::get('thong-bao/{id}', [ThongBaoController::class, 'details']);
             Route::get('loai-thong-bao', [LoaiThongBaoController::class, 'index']);
+            Route::get('chi-tiet-thong-bao/{id}', [ThongBaoController::class, 'details']);
+
+            Route::post('change-password', [AuthenticateController::class, 'changePassword']);
+            Route::get('profile', [NhanVienController::class, 'profile']);
         });
     });
 });

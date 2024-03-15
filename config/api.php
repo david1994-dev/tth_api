@@ -41,4 +41,12 @@ return [
         'message'        => 'Sorry, Can\'t working with Database !!!',
         'httpStatusCode' => 500
     ],
+    40102 => [
+        'message'        => 'Error, Password not correct !!!',
+        'httpStatusCode' => 401
+    ],
+    40003 => [
+        'message'        => 'Error, Renew password not matching !!!',
+        'httpStatusCode' => 400
+    ],
 ];

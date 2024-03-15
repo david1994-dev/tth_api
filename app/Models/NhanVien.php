@@ -23,6 +23,11 @@ class NhanVien extends Base
         return $this->hasOne(PhongBan::class, 'id', 'phong_ban_id');
     }
 
+    public function viTriCongViec()
+    {
+        return $this->hasOne(ViTriCongViec::class, 'id', 'vi_tri_cong_viec_id');
+    }
+
     protected $fillable = [
         'ma',
         'user_id',
@@ -41,4 +46,17 @@ class NhanVien extends Base
         'deleted_at' => 'datetime:Y-m-d H:i:s',
         'ngay_sinh' => 'date'
     ];
+
+    public function toProfileAPI()
+    {
+        return [
+            'id' => $this->id,
+            'ma' => $this->ma,
+            'email' => $this->email,
+            'ho_ten' => $this->ho_ten,
+            'dien_thoai_cong_viec' => $this->dien_thoai_cong_viec,
+            'phong_ban' => $this->phongBan->ten,
+            'vi_tri_cong_viec' => $this->viTriCongViec->ten,
+        ];
+    }
 }

@@ -48,6 +48,7 @@ class ThongBaoController extends Controller
 
         $models = $this->thongBaoRepository->getNotifications($user, $filter, $paginate['order'], $paginate['direction'], $paginate['offset'], $paginate['limit']);
         $models = $this->thongBaoRepository->load($models, ['loaiThongBao', 'nguoiGui.nhanVien.phongBan']);
+
         foreach( $models as $key => $model ) {
             $models[$key] = $model->toAPIArray();
         }
@@ -124,6 +125,8 @@ class ThongBaoController extends Controller
         if(!$model) {
             return Response::response(20004);
         }
+
+
 
         return Response::response(200, $model->toDetailArray());
     }

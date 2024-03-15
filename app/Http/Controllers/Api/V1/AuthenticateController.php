@@ -7,6 +7,8 @@ use App\Http\Responses\API\V1\Response;
 use App\Http\Services\AuthenticatableServiceInterface;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
 class AuthenticateController extends Controller
 {
     private AuthenticatableServiceInterface $authenticatableService;
@@ -33,5 +35,24 @@ class AuthenticateController extends Controller
                 $accessToken->token->expires_at
             )->toDateTimeString()
         ]);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $user = auth()->user();
+        $input = $request->only(['current_password', 'new_password', 're_password']);
+
+        if (!Hash::check($input['current_password'], $user->password)) {
+            return Response::response(40102);
+        }
+
+        if ($input['new_password'] != $input['re_password']) {
+            return Response::response(40003);
+        }
+
+        $user->password = Hash::make($input['new_password']);
+        $user->save();
+
+        return Response::response(200);
     }
 }
